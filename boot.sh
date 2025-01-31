@@ -1,5 +1,6 @@
 
-pip install -r requirements.txt
+
+pip3 install -r requirements.txt
 
 echo "    Welcome to the Takina boot menu."
 echo "========================================="
@@ -11,8 +12,7 @@ if [ "$GROQ_API_KEY" = "" ]; then
 
   echo "Processing..."
 
-  touch logs.txt
-  export GROQ_API_KEY="$groq_api" 2> logs.txt
+  export GROQ_API_KEY="$groq_api"
 
 fi
 

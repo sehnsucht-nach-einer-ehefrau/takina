@@ -1,1 +1,0 @@
-./boot.sh: line 14: GROQ_API_KEY=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: No such file or directory
