@@ -6,4 +6,4 @@ Get your own Groq API for free from #[groq.com][https://groq.com/]
 
 - [ ] Add a GUI
 
-***... probably more to do
+*... probably more to do*
