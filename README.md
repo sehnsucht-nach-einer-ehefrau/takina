@@ -4,5 +4,6 @@ Auto task scheduler using Groq API's. Describe everything you have to do by the 
 
 Get your own Groq API for free from #[groq.com][https://groq.com/]
 
-[] Add a GUI
+- [ ] Add a GUI
+
 ... probably more to do
