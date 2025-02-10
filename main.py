@@ -35,17 +35,19 @@ def main():
 def check_for_time_frame(task):
     global client
 
-    comparison_string = f"Does this provide a time frame? Only answer in yes or no, but if yes provide the number of days until the due date. If yes, don't say anything other than the number. Include today. Today's Date: {datetime.date.today()}. Today's Day: {datetime.date.today().strftime("%A")} User input: {task}"  
+    comparison_string = f"Determine if the user input specifies a due date or time frame. Only answer 'yes' or 'no.' If no, respond only with 'no.' If yes, calculate the number of days including today and the due date itself until the deadline. Respond with the number alone. Example: If today is Monday, February 3, 2025, and the deadline is 'by this Sunday,' return 7 (Monday → Sunday). If the deadline is 'by Saturday,' return 6 (Monday → Saturday). Don't write code, don't do anything but give the number or just 'no.'. Today's date: {datetime.date.today()} Today's day: {datetime.date.today().strftime("%A")} User input: {task}"
 
     yes_or_no = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": comparison_string,
-                    }
-                ],
-            model="llama-3.3-70b-versatile"
-            )
+        messages=[
+            {
+                "role": "user",
+                "content": comparison_string,
+            }
+        ],
+        model="llama-3.3-70b-versatile"
+    )
+
+    print(yes_or_no.choices[0].message.content)
 
     if 'no' in yes_or_no.choices[0].message.content or 'No' in yes_or_no.choices[0].message.content:
         return False
@@ -54,7 +56,7 @@ def check_for_time_frame(task):
 
 
 def change_string(task, timeframe):
-    return f"Schedule the following task EVENLY through {timeframe} days. Copy the following format:\ntask progress\ntask progress\nmore tasks if needed\n\ntask progress\ntask progress\nmore tasks if needed\n\nEach group separated by double new lines represents one day, and 'task progress' should represent what you should do each day.\nDo not introduce yourself, do not say anything except for the task progress lines. \nUser input:\n{task}"
+    return f"Return a daily breakdown of the following task evenly over {timeframe} days. ALWAYS UTILIZE ALL THE AVAILABLE DAYS. Each day's tasks should be specific and actionable, breaking the task into meaningful progress steps. Do not introduce yourself, do not include anything except the scheduled tasks. Format: [Task for Day 1]\n[Task for Day 1]\n[More tasks if needed]\n\n[Task for Day 2]\n[Task for Day 2]\n\n[More tasks if needed]\n...\nEach group separated by double new lines represents one day, so DON'T PUT THE DAY NUMBERS OR THE WORD DAY. Ensure that the steps logically progress toward completing the full task by the final day.\nUser input: {task}"
 
 def call_groq(task):
     global client
@@ -84,6 +86,8 @@ def call_groq(task):
         print(f"Day {day_num}")
         for j in i:
             print(f"- {j}")
+
+        print("")
 
         day_num += 1
 
