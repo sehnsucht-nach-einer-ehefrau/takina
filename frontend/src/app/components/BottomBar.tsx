@@ -1,15 +1,11 @@
 "use client";
 
 import type * as React from "react";
-import { Moon, Sun, Settings, Key } from "lucide-react";
+import { Moon, Sun, Key, User, History } from "lucide-react"; // Import User icon
 import { useTheme } from "next-themes";
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-import { Command, open } from "@tauri-apps/plugin-shell";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,20 +15,27 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import { HistoryBar } from "./HistoryBar";
+
 export default function BottomBar() {
-  const [theme, themeSetter] = useState(true);
+  const [theme, themeSetter] = useState(false);
   const [apiKey, setApiKey] = useState("");
-  const [hasApiKey, setHasApiKey] = useState(true); // Set this to false to disable the confirmation dialog
-  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false); // Controls the confirmation dialog
-  const [showApiKeyInputDialog, setShowApiKeyInputDialog] = useState(false); // Controls the API key input dialog
+  const [hasApiKey, setHasApiKey] = useState(true);
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+  const [showApiKeyInputDialog, setShowApiKeyInputDialog] = useState(false);
+  const [showPaymentPlansDialog, setShowPaymentPlansDialog] = useState(false); // State for payment plans dialog
+
+  const checkGroqExists = () => {
+    return localStorage.getItem("groqApiKey") !== null;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("API Key submitted:", apiKey);
-    setShowApiKeyInputDialog(false); // Close the dialog after submission
+    localStorage.setItem("groqApiKey", apiKey);
+    setHasApiKey(true);
+    setShowApiKeyInputDialog(false);
   };
 
   const { setTheme } = useTheme();
@@ -46,14 +49,8 @@ export default function BottomBar() {
     }
   };
 
-  // Function to open the Groq API key registration page using Tauri's shell API
-  const openGroqApiKeyPage = async () => {
-    const output = await Command.create("echo", "message").execute();
-    await open("https://console.groq.com/keys");
-  };
-
   return (
-    <div className="flex justify-center mb-16">
+    <div className="flex justify-center mb-16 mt-4">
       <Button variant="ghost" size="icon" onClick={() => themeSet()}>
         <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
         <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -65,14 +62,23 @@ export default function BottomBar() {
           variant="ghost"
           size="icon"
           onClick={() => {
-            if (hasApiKey) {
-              setShowConfirmationDialog(true); // Open confirmation dialog if API key exists
+            if (hasApiKey && checkGroqExists()) {
+              setShowConfirmationDialog(true);
             } else {
-              setShowApiKeyInputDialog(true); // Open API key input dialog if no API key exists
+              setShowApiKeyInputDialog(true);
             }
           }}
         >
           <Key className="h-5 w-5" />
+        </Button>
+
+        {/* User Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setShowPaymentPlansDialog(true)}
+        >
+          <User className="h-5 w-5" />
         </Button>
 
         {/* Confirmation Dialog */}
@@ -93,8 +99,8 @@ export default function BottomBar() {
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => {
-                    setShowConfirmationDialog(false); // Close the confirmation dialog
-                    setShowApiKeyInputDialog(true); // Open the API key input dialog
+                    setShowConfirmationDialog(false);
+                    setShowApiKeyInputDialog(true);
                   }}
                 >
                   Continue
@@ -120,16 +126,13 @@ export default function BottomBar() {
                     />
                     <p className="text-sm text-muted-foreground">
                       Don&apos;t have a Groq API key? Get one for free{" "}
-                      <Button
-                        variant="link"
-                        className="p-0 font-medium text-primary hover:underline"
-                        onClick={async (e) => {
-                          e.preventDefault(); // Prevent the form from submitting
-                          await openGroqApiKeyPage(); // Open the link using Tauri's shell API
-                        }}
+                      <a
+                        href="https://console.groq.com/keys"
+                        target="_blank"
+                        className="font-medium text-primary underline"
                       >
                         here
-                      </Button>
+                      </a>
                     </p>
                   </div>
                   <div className="flex justify-between gap-4">
@@ -146,11 +149,119 @@ export default function BottomBar() {
             </AlertDialogHeader>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
 
-      <Button variant="ghost" size="icon">
-        <Settings />
-      </Button>
+        {/* Payment Plans Dialog */}
+        <AlertDialog open={showPaymentPlansDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Choose a Payment Plan</AlertDialogTitle>
+              <AlertDialogDescription>
+                Select the plan that best suits your needs.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* $2 Plan */}
+              <div className="border rounded-lg p-4 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg">$2/month</h3>
+                  <ul className="mt-2 text-sm text-muted-foreground text-center">
+                    <li>Basic scheduling</li>
+                    <div className="flex justify-center">
+                      <div className="w-[90%] h-[0.5] bg-gray-300 my-2"></div>
+                    </div>
+                    <li>Plan every day of the Week</li>
+                    <div className="flex justify-center">
+                      <div className="w-[90%] h-[0.5] bg-gray-300 my-2"></div>
+                    </div>
+                    <li>Email reminders</li>
+                  </ul>
+                </div>
+                <Button
+                  className="mt-4 w-full"
+                  onClick={() => (window.location.href = "/subscription/basic")}
+                >
+                  Choose Plan
+                </Button>
+              </div>
+
+              {/* $5 Plan */}
+              <div className="border rounded-lg p-4 flex flex-col justify-between ">
+                <div>
+                  <h3 className="font-semibold text-lg">$5/month</h3>
+                  <ul className="mt-2 text-sm text-muted-foreground text-center">
+                    <li>Plan every day of the Month</li>
+                    <div className="flex justify-center">
+                      <div className="w-[90%] h-[0.5] bg-gray-300 my-2"></div>
+                    </div>
+                    <li>Email reminders</li>
+                    <div className="flex justify-center">
+                      <div className="w-[90%] h-[0.5] bg-gray-300 my-2"></div>
+                    </div>
+                    <li>Google Calendar reminders</li>
+                    <div className="flex justify-center">
+                      <div className="w-[90%] h-[0.5] bg-gray-300 my-2"></div>
+                    </div>
+                    <li>Limited retries</li>
+                  </ul>
+                </div>
+                <Button
+                  className="mt-4 w-full"
+                  onClick={() =>
+                    (window.location.href = "/subscription/advanced")
+                  }
+                >
+                  Choose Plan
+                </Button>
+              </div>
+
+              {/* $10 Plan */}
+              <div className="border rounded-lg p-4 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg">$10/month</h3>
+                  <ul className="mt-2 text-sm text-muted-foreground text-center">
+                    <li>Everything from lower tier plans</li>
+                    <div className="flex justify-center">
+                      <div className="w-[90%] h-[0.5] bg-gray-300 my-2"></div>
+                    </div>
+                    <li>Free access to one other app by Sehnsucht</li>
+                    <div className="flex justify-center">
+                      <div className="w-[90%] h-[0.5] bg-gray-300 my-2"></div>
+                    </div>
+                    <li>Unlimited Retries</li>
+                  </ul>
+                </div>
+                <Button
+                  className="mt-4 w-full"
+                  onClick={() =>
+                    (window.location.href = "/subscription/professional")
+                  }
+                >
+                  Choose Plan
+                </Button>
+              </div>
+            </div>
+            <AlertDialogFooter>
+              <div className="flex justify-between items-center w-full">
+                <p className="text-sm text-muted-foreground">
+                  View other apps by{" "}
+                  <a
+                    href="https://example.com" // Replace with the actual URL
+                    target="_blank"
+                    className="font-medium underline hover:text-primary duration-200 ease-in-out"
+                  >
+                    Sehnsucht
+                  </a>
+                </p>
+                <AlertDialogCancel
+                  onClick={() => setShowPaymentPlansDialog(false)}
+                >
+                  Close
+                </AlertDialogCancel>
+              </div>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }

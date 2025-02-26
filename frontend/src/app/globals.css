@@ -8,6 +8,23 @@
   font-style: normal;
 }
 
+/* Hide scrollbar for all browsers */
+html {
+  overflow: -moz-scrollbars-none; /* Older Firefox */
+  scrollbar-width: none; /* Newer Firefox */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+body {
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
 /*
 @media (prefers-color-scheme: dark) {
   :root {
@@ -80,6 +97,17 @@ body {
 @layer base {
   * {
     @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
