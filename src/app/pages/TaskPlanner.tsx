@@ -318,7 +318,18 @@ export default function TaskPlanner() {
             </Popover>
           </div>
         </div>
-        <Button onClick={handleSubmit} className="w-full" size="lg">
+        <Button
+          onClick={() => {
+            const apiKeyExists = localStorage.getItem("groqApiKey");
+            if (apiKeyExists != null) {
+              handleSubmit();
+            } else {
+              setShowApiKeyDialog(true);
+            }
+          }}
+          className="w-full"
+          size="lg"
+        >
           Submit
         </Button>
         <AlertDialog open={showApiKeyDialog} onOpenChange={setShowApiKeyDialog}>
@@ -470,9 +481,7 @@ export default function TaskPlanner() {
                 <AlertDialog open={isOpenDelete}>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Begin task walkthrough?
-                      </AlertDialogTitle>
+                      <AlertDialogTitle>Delete task forever?</AlertDialogTitle>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <div className="flex justify-between gap-4 w-full">
