@@ -1,2 +1,43 @@
-__pycache__
-venv
+
+# Node modules
+/node_modules/
+
+# Build outputs
+/out/
+/.next/
+
+# Tauri build files
+/src-tauri/target/
+
+# Log files
+*.log
+
+# Dependency directory for pnpm
+.pnpm/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# MacOS system files
+.DS_Store
+
+# Editor directories and files
+.vscode/
+.idea/
+
+# TypeScript build output
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm/
+
+# Coverage directory for code coverage reports
+/coverage/
+
+# Next.js local development settings
+.next/
+
+# Tailwind config settings
+.tailwind/
