@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/sehnsucht-nach-einer-ehefrau/takina/master/takina.png" width="258"/></img>
+<img src="https://raw.githubusercontent.com/sehnsucht-nach-einer-ehefrau/takina/master/takina.png" width="330"/></img>
 
 # TAKINA
 
