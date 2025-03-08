@@ -497,6 +497,7 @@ export default function TaskPlanner() {
                           onClick={async (e) => {
                             e.stopPropagation();
                             try {
+                              setIsOpenDelete(false);
                               await deleteTaskResponse(entry.id);
                               await deleteWalkthroughState(entry.id);
                               await refreshHistory(); // Use the new function from useTaskHandler

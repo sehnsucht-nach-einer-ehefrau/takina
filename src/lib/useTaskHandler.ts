@@ -74,7 +74,7 @@ export function useTaskHandler() {
       const prompt: Message[] = [
         {
           role: "system",
-          content: `Return a daily breakdown of the following task evenly over ${dateDifference} days. ALWAYS UTILIZE ALL THE AVAILABLE DAYS, BUT DON'T GO OVER THAT NUMBER. ALWAYS USE ALL GIVEN TASKS. Each day's tasks should be specific and actionable, breaking the task into meaningful progress steps. Do not introduce yourself, do not include anything except the scheduled tasks. Format: Day 1\n- task\n- task\n[More tasks if needed]\n\nDay 2\n- task\n- task\n\n...\nEach group separated by double new lines represents one day. Ensure that the steps logically progress toward completing the full task by the final day.`,
+          content: `Return a daily breakdown of the following task evenly over ${dateDifference} days. ALWAYS UTILIZE ALL THE AVAILABLE DAYS, BUT DON'T GO OVER THAT NUMBER. ALWAYS USE ALL GIVEN TASKS AND STEPS. MAKE SURE THE TASKS ARE EVENLY SPREAD ACROSS THE DAYS, meaning one day shouldn't be overloaded with tasks if possible. Do not introduce yourself, do not include anything except the scheduled tasks. Format: Day 1\n- task\n- task\n[More tasks if needed]\n\nDay 2\n- task\n- task\n\n...\nEach group separated by double new lines represents one day.`,
         },
         {
           role: "user",

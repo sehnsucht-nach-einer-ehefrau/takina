@@ -26,7 +26,7 @@
       },
       "externalBin": [],
       "icon": ["icons/takina.png", "icons/icon.icns", "icons/icon.ico"],
-      "identifier": "com.takina.dev",
+      "identifier": "com.sehnsucht-nach-einer-ehefrau.takina",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
